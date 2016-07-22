@@ -1,0 +1,8 @@
+To begin with, a new model named Move was created. It is used to store information about user's moves in the selected game: the guessed character (guess), revealed parts of the word (word status) and the status showing if character appears in the word (verdict).
+
+The model representing Game changed a little according to the rules of hangman. I added field storing the word, field storing current status of revealing word (e.g. ha--ma-). Although the number of errors that user can do is fixed to 6 (according to the rules), I thought that the ability to change this number must be left. A good reason for this is different length of words. For example, it's really hard to play with short words.
+
+Then I decided to add field 'current_move_number' to the model Game. The main goal of this step was to obtain a tool allowing to order moves. I thought that working with numbers instead of dates in this particular case is good for clarity (for example I could add datetime field to model Move and order moves by the date of creation).
+
+Another decision I've made relates to ranking users. I thought that the easiest way to rank users is to have function, that can be calculated without depends on other users, by the demand.
+So, every user keeps all the needed information for calculation the function (in my case it is win/loss ratio) and the result of calculation after the latest information change. This makes the query to the database very simple, but this technique may be not so good in some situations, for example, when the number of users is huge and extra data in the model will significantly increase the database size.
