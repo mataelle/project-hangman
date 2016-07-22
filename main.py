@@ -1,9 +1,6 @@
 import webapp2
 from google.appengine.api import mail, app_identity
-from api import HangmanApi
-
 from models import User, Game
-
 
 class SendReminderEmail(webapp2.RequestHandler):
     def get(self):
@@ -24,14 +21,7 @@ class SendReminderEmail(webapp2.RequestHandler):
                                body)
 
 
-class UpdateAverageMovesRemaining(webapp2.RequestHandler):
-    def post(self):
-        """Update game listing announcement in memcache."""
-        HangmanApi._cache_average_attempts()
-        self.response.set_status(204)
-
 
 app = webapp2.WSGIApplication([
     ('/crons/send_reminder', SendReminderEmail),
-    ('/tasks/cache_average_attempts', UpdateAverageMovesRemaining),
 ], debug=True)
