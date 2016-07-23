@@ -1,6 +1,8 @@
 ## Hangman endpoints
 
 The word to guess is represented by a row of dashes, representing each letter of the word. In most variants, proper nouns, such as names, places, and brands, are not allowed. If the guessing player suggests a letter which occurs in the word, the other player writes it in all its correct positions. If the suggested letter or number does not occur in the word, the other player draws one element of a hanged man stick figure as a tally mark. [wikipedia](https://en.wikipedia.org/wiki/Hangman_(game))
+The game id scored by the number of errors made.
+The users are ranked by their win/loss ratio.
 
 
 ## Set-Up Instructions:
