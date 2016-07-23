@@ -115,9 +115,9 @@ The word to guess is represented by a row of dashes, representing each letter of
     - Used to create a new game (user_name, min, max, attempts)
  - **MakeMoveForm**
     - Inbound make move form (guess).
-- **UserRankForm**
+ - **UserRankForm**
     - Represents ranked user with user_name and win_loss_ratio.
-- **UserRanksForm**
+ - **UserRanksForm**
     - Multiple UserRankForm container.
  - **ScoreForm**
     - Representation of a completed game's Score (user_name, date, won flag,
