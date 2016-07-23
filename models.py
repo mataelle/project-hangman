@@ -72,6 +72,7 @@ class Game(ndb.Model):
     def cancel_game(self):
         """Cancel game"""
         if not self.game_over:
+            self.game_over = True
             self.game_cancel = True
             self.put()
 

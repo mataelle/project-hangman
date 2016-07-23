@@ -1,6 +1,5 @@
 import endpoints
 from protorpc import remote, messages
-from google.appengine.api import memcache
 from google.appengine.api import taskqueue
 
 from models import User, Game, Move, Score
@@ -19,11 +18,7 @@ CREATE_USER_REQUEST = endpoints.ResourceContainer(
     email=messages.StringField(2))
 
 NEW_GAME_REQUEST = endpoints.ResourceContainer(NewGameForm)
-GET_GAME_REQUEST = endpoints.ResourceContainer(
-    urlsafe_game_key=messages.StringField(1))
-CANCEL_GAME_REQUEST = endpoints.ResourceContainer(
-    urlsafe_game_key=messages.StringField(1))
-GET_GAME_HISTORY_REQUEST = endpoints.ResourceContainer(
+KEY_GAME_REQUEST = endpoints.ResourceContainer(
     urlsafe_game_key=messages.StringField(1))
 
 GET_USER_GAMES_REQUEST = endpoints.ResourceContainer(
@@ -75,21 +70,21 @@ class HangmanApi(remote.Service):
         taskqueue.add(url='/tasks/cache_average_attempts')
         return game.to_form('Let\'s play!')
 
-    @endpoints.method(request_message=CANCEL_GAME_REQUEST,
+    @endpoints.method(request_message=KEY_GAME_REQUEST,
                       response_message=GameForm,
                       path='game/{urlsafe_game_key}/cancel',
                       name='cancel_game',
-                      http_method='POST')
+                      http_method='PUT')
     def cancel_game(self, request):
         """Cancels game"""
         game = get_by_urlsafe(request.urlsafe_game_key, Game)
-        if game:
+        if game and not game.game_over:
             game.cancel_game()
             return game.to_form('Successfully cancelled!')
         else:
             raise endpoints.NotFoundException('Game not found!')
 
-    @endpoints.method(request_message=GET_GAME_REQUEST,
+    @endpoints.method(request_message=KEY_GAME_REQUEST,
                       response_message=GameForm,
                       path='game/{urlsafe_game_key}',
                       name='get_game',
@@ -114,12 +109,14 @@ class HangmanApi(remote.Service):
         if not user:
             raise endpoints.NotFoundException(
                 'A User with that name does not exist!')
-        games = Game.query(ancestor=user.key).fetch()
+        games = Game.query(Game.game_over==False,
+                           Game.game_cancel==False,
+                           ancestor=user.key).fetch()
         response = GamesForm()
         response.games = [game.to_form('') for game in games]
         return response
 
-    @endpoints.method(request_message=GET_GAME_HISTORY_REQUEST,
+    @endpoints.method(request_message=KEY_GAME_REQUEST,
                       response_message=GameHistory,
                       path='game/{urlsafe_game_key}/history',
                       name='game_history',
@@ -150,7 +147,7 @@ class HangmanApi(remote.Service):
                       response_message=GameForm,
                       path='game/{urlsafe_game_key}/move',
                       name='make_move',
-                      http_method='POST')
+                      http_method='PUT')
     def make_move(self, request):
         """Makes a move. Returns a game state with message"""
 

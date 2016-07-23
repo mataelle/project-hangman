@@ -31,16 +31,15 @@ The users are ranked by their win/loss ratio.
     - Parameters: user_name, attempts(optional)
     - Returns: GameForm with initial game state.
     - Description: Creates a new Game. user_name provided must correspond to an
-    existing user - will raise a NotFoundException if not. Min must be less than
-    max. Also adds a task to a task queue to update the average moves remaining
-    for active games.
+    existing user - will raise a NotFoundException if not. The number of attempts can be changed from
+    default set to 6.
 
  - **cancel_game**
     - Path: 'game/{urlsafe_game_key}/cancel'
-    - Method: GET
+    - Method: PUT
     - Parameters: urlsafe_game_key
     - Returns: GameForm with current game state.
-    - Description: Cancels a game. Returns the current state of a game.
+    - Description: Cancels a game if not over. Returns the current state of a game.
 
  - **get_game**
     - Path: 'game/{urlsafe_game_key}'
@@ -67,7 +66,7 @@ The users are ranked by their win/loss ratio.
 
  - **make_move**
     - Path: 'game/{urlsafe_game_key}/move'
-    - Method: POST
+    - Method: PUT
     - Parameters: urlsafe_game_key, guess
     - Returns: GameForm with new game state.
     - Description: Accepts a 'guess' and returns the updated state of the game.
@@ -105,7 +104,7 @@ The users are ranked by their win/loss ratio.
 
 ##Forms Included:
  - **GameForm**
-    - Representation of a Game's state (urlsafe_key, attempts_remaining,
+    - Representation of a Game's state (urlsafe_key, attempts_remaining - default 6,
     word_status, game_over flag, message, user_name).
  - **GamesForm**
     - Multiple GameForm container.
